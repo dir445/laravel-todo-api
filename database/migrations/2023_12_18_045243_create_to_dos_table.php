@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('title');
             $table->longText('description');
             $table->date('due_date');
+            $table->foreignId('user_id')->constrained('users');
         });
     }
 

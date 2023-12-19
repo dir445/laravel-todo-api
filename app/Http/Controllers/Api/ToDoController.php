@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ToDo;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreToDoRequest;
+use Illuminate\Support\Facades\Auth;
 
 class ToDoController extends Controller
 {
@@ -14,7 +15,8 @@ class ToDoController extends Controller
      */
     public function index()
     {
-        $toDos = ToDo::all();
+        $user_id = Auth::id();
+        $toDos = ToDo::where('user_id','=',$user_id)->get();
         return response()->json([
             'status' => true,
             'toDos' => $toDos
@@ -39,12 +41,14 @@ class ToDoController extends Controller
      */
     public function show($id)
     {
-        $toDo = Todo::find($id);
+        $user_id = Auth::id();
+        $toDo = ToDo::where('user_id','=',$user_id)->find($id);
         if(!$toDo){
             return response([
                 'message' => 'ToDo is not found.'
             ], 404);
         }
+        $user_id = Auth::id();
         return response()->json([
             'status' => true,
             'toDo' => $toDo,
@@ -56,7 +60,13 @@ class ToDoController extends Controller
      */
     public function update(StoreTodoRequest $request, $id)
     {
-        $toDo = ToDo::findOrFail($id);
+        $user_id = Auth::id();
+        $toDo = ToDo::where('user_id','=',$user_id)->find($id);
+        if(!$toDo){
+            return response([
+                'message' => 'ToDo is not found.'
+            ], 404);
+        }
         $toDo->update($request->all());
         return response()->json([
             'status' => true,
@@ -70,7 +80,13 @@ class ToDoController extends Controller
      */
     public function destroy($id)
     {
-        $toDo = ToDo::findOrFail($id);
+        $user_id = Auth::id();
+        $toDo = ToDo::where('user_id','=',$user_id)->find($id);
+        if(!$toDo){
+            return response([
+                'message' => 'ToDo is not found.'
+            ], 404);
+        }
         $toDo->delete();
         return response()->json([
             'status' => true,
